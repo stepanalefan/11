@@ -1,0 +1,698 @@
+{
+  "runtimeTarget": {
+    "name": ".NETCoreApp,Version=v10.0",
+    "signature": ""
+  },
+  "compilationOptions": {},
+  "targets": {
+    ".NETCoreApp,Version=v10.0": {
+      "ATAS.Indicators/1.0.0": {
+        "dependencies": {
+          "ATAS.DataFeedsCore": "1.0.0",
+          "Avalonia": "11.3.9",
+          "OFT.Attributes": "1.0.0",
+          "OFT.Rendering": "1.0.0",
+          "Utils.Common": "1.0.0",
+          "ATAS.DataFeedsCore.Reference": "8.0.15.640",
+          "OFT.Attributes.Reference": "1.0.0.0",
+          "OFT.Localization.Reference": "1.0.0.0",
+          "OFT.Rendering.Reference": "8.0.15.640",
+          "Utils.Common.Reference": "1.0.0.0"
+        },
+        "runtime": {
+          "ATAS.Indicators.dll": {}
+        }
+      },
+      "Avalonia/11.3.9": {
+        "dependencies": {
+          "Avalonia.Remote.Protocol": "11.3.9",
+          "MicroCom.Runtime": "0.11.0"
+        },
+        "runtime": {
+          "lib/net8.0/Avalonia.Base.dll": {
+            "assemblyVersion": "11.3.9.0",
+            "fileVersion": "11.3.9.0"
+          },
+          "lib/net8.0/Avalonia.Controls.dll": {
+            "assemblyVersion": "11.3.9.0",
+            "fileVersion": "11.3.9.0"
+          },
+          "lib/net8.0/Avalonia.DesignerSupport.dll": {
+            "assemblyVersion": "0.7.0.0",
+            "fileVersion": "0.7.0.0"
+          },
+          "lib/net8.0/Avalonia.Dialogs.dll": {
+            "assemblyVersion": "11.3.9.0",
+            "fileVersion": "11.3.9.0"
+          },
+          "lib/net8.0/Avalonia.Markup.Xaml.dll": {
+            "assemblyVersion": "11.3.9.0",
+            "fileVersion": "11.3.9.0"
+          },
+          "lib/net8.0/Avalonia.Markup.dll": {
+            "assemblyVersion": "11.3.9.0",
+            "fileVersion": "11.3.9.0"
+          },
+          "lib/net8.0/Avalonia.Metal.dll": {
+            "assemblyVersion": "11.3.9.0",
+            "fileVersion": "11.3.9.0"
+          },
+          "lib/net8.0/Avalonia.MicroCom.dll": {
+            "assemblyVersion": "11.3.9.0",
+            "fileVersion": "11.3.9.0"
+          },
+          "lib/net8.0/Avalonia.OpenGL.dll": {
+            "assemblyVersion": "11.3.9.0",
+            "fileVersion": "11.3.9.0"
+          },
+          "lib/net8.0/Avalonia.Vulkan.dll": {
+            "assemblyVersion": "11.3.9.0",
+            "fileVersion": "11.3.9.0"
+          },
+          "lib/net8.0/Avalonia.dll": {
+            "assemblyVersion": "11.3.9.0",
+            "fileVersion": "11.3.9.0"
+          }
+        }
+      },
+      "Avalonia.Remote.Protocol/11.3.9": {
+        "runtime": {
+          "lib/net8.0/Avalonia.Remote.Protocol.dll": {
+            "assemblyVersion": "11.3.9.0",
+            "fileVersion": "11.3.9.0"
+          }
+        }
+      },
+      "CommandLineParser/2.9.1": {
+        "runtime": {
+          "lib/netstandard2.0/CommandLine.dll": {
+            "assemblyVersion": "2.9.1.0",
+            "fileVersion": "2.9.1.0"
+          }
+        }
+      },
+      "K4os.Compression.LZ4/1.3.8": {
+        "runtime": {
+          "lib/net6.0/K4os.Compression.LZ4.dll": {
+            "assemblyVersion": "1.3.8.0",
+            "fileVersion": "1.3.8.0"
+          }
+        }
+      },
+      "linq2db/5.2.2": {
+        "runtime": {
+          "lib/net6.0/linq2db.dll": {
+            "assemblyVersion": "5.2.2.0",
+            "fileVersion": "5.2.2.0"
+          }
+        }
+      },
+      "log4net/3.3.1": {
+        "dependencies": {
+          "System.Configuration.ConfigurationManager": "4.5.0"
+        },
+        "runtime": {
+          "lib/netstandard2.0/log4net.dll": {
+            "assemblyVersion": "3.3.1.0",
+            "fileVersion": "3.3.1.0"
+          }
+        }
+      },
+      "Macross.Json.Extensions/3.0.0": {
+        "runtime": {
+          "lib/net6.0/Macross.Json.Extensions.dll": {
+            "assemblyVersion": "3.0.0.22164",
+            "fileVersion": "3.0.0.0"
+          }
+        }
+      },
+      "MicroCom.Runtime/0.11.0": {
+        "runtime": {
+          "lib/net5.0/MicroCom.Runtime.dll": {
+            "assemblyVersion": "0.11.0.0",
+            "fileVersion": "0.11.0.0"
+          }
+        }
+      },
+      "Microsoft.Extensions.ObjectPool/10.0.0": {
+        "runtime": {
+          "lib/net10.0/Microsoft.Extensions.ObjectPool.dll": {
+            "assemblyVersion": "10.0.0.0",
+            "fileVersion": "10.0.25.52411"
+          }
+        }
+      },
+      "Microsoft.Win32.SystemEvents/8.0.0": {
+        "runtime": {
+          "lib/net8.0/Microsoft.Win32.SystemEvents.dll": {
+            "assemblyVersion": "8.0.0.0",
+            "fileVersion": "8.0.23.53103"
+          }
+        },
+        "runtimeTargets": {
+          "runtimes/win/lib/net8.0/Microsoft.Win32.SystemEvents.dll": {
+            "rid": "win",
+            "assetType": "runtime",
+            "assemblyVersion": "8.0.0.0",
+            "fileVersion": "8.0.23.53103"
+          }
+        }
+      },
+      "morelinq/3.3.1": {
+        "runtime": {
+          "lib/netstandard2.0/MoreLinq.dll": {
+            "assemblyVersion": "3.3.1.0",
+            "fileVersion": "3.3.1.0"
+          }
+        }
+      },
+      "Newtonsoft.Json/13.0.3": {
+        "runtime": {
+          "lib/net6.0/Newtonsoft.Json.dll": {
+            "assemblyVersion": "13.0.0.0",
+            "fileVersion": "13.0.3.27908"
+          }
+        }
+      },
+      "Pipelines.Sockets.Unofficial/2.1.11": {
+        "runtime": {
+          "lib/netcoreapp3.1/Pipelines.Sockets.Unofficial.dll": {
+            "assemblyVersion": "1.0.0.0",
+            "fileVersion": "2.1.11.56636"
+          }
+        }
+      },
+      "protobuf-net/3.2.45": {
+        "dependencies": {
+          "protobuf-net.Core": "3.2.45"
+        },
+        "runtime": {
+          "lib/net6.0/protobuf-net.dll": {
+            "assemblyVersion": "3.0.0.0",
+            "fileVersion": "3.2.45.36865"
+          }
+        }
+      },
+      "protobuf-net.Core/3.2.45": {
+        "runtime": {
+          "lib/net6.0/protobuf-net.Core.dll": {
+            "assemblyVersion": "3.0.0.0",
+            "fileVersion": "3.2.45.36865"
+          }
+        }
+      },
+      "SkiaSharp/3.116.1": {
+        "dependencies": {
+          "SkiaSharp.NativeAssets.Win32": "3.116.1",
+          "SkiaSharp.NativeAssets.macOS": "3.116.1"
+        },
+        "runtime": {
+          "lib/net8.0/SkiaSharp.dll": {
+            "assemblyVersion": "3.116.0.0",
+            "fileVersion": "3.116.1.0"
+          }
+        }
+      },
+      "SkiaSharp.NativeAssets.macOS/3.116.1": {
+        "runtimeTargets": {
+          "runtimes/osx/native/libSkiaSharp.dylib": {
+            "rid": "osx",
+            "assetType": "native",
+            "fileVersion": "0.0.0.0"
+          }
+        }
+      },
+      "SkiaSharp.NativeAssets.Win32/3.116.1": {
+        "runtimeTargets": {
+          "runtimes/win-arm64/native/libSkiaSharp.dll": {
+            "rid": "win-arm64",
+            "assetType": "native",
+            "fileVersion": "0.0.0.0"
+          },
+          "runtimes/win-x64/native/libSkiaSharp.dll": {
+            "rid": "win-x64",
+            "assetType": "native",
+            "fileVersion": "0.0.0.0"
+          },
+          "runtimes/win-x86/native/libSkiaSharp.dll": {
+            "rid": "win-x86",
+            "assetType": "native",
+            "fileVersion": "0.0.0.0"
+          }
+        }
+      },
+      "System.Configuration.ConfigurationManager/4.5.0": {
+        "dependencies": {
+          "System.Security.Cryptography.ProtectedData": "8.0.0",
+          "System.Security.Permissions": "4.5.0"
+        },
+        "runtime": {
+          "lib/netstandard2.0/System.Configuration.ConfigurationManager.dll": {
+            "assemblyVersion": "4.0.1.0",
+            "fileVersion": "4.6.26515.6"
+          }
+        }
+      },
+      "System.Drawing.Common/8.0.8": {
+        "dependencies": {
+          "Microsoft.Win32.SystemEvents": "8.0.0"
+        },
+        "runtime": {
+          "lib/net8.0/System.Drawing.Common.dll": {
+            "assemblyVersion": "8.0.0.0",
+            "fileVersion": "8.0.824.36606"
+          }
+        }
+      },
+      "System.IO.Hashing/10.0.0": {
+        "runtime": {
+          "lib/net10.0/System.IO.Hashing.dll": {
+            "assemblyVersion": "10.0.0.0",
+            "fileVersion": "10.0.25.52411"
+          }
+        }
+      },
+      "System.Security.Cryptography.ProtectedData/8.0.0": {
+        "runtime": {
+          "lib/net8.0/System.Security.Cryptography.ProtectedData.dll": {
+            "assemblyVersion": "8.0.0.0",
+            "fileVersion": "8.0.23.53103"
+          }
+        }
+      },
+      "System.Security.Permissions/4.5.0": {
+        "runtime": {
+          "lib/netstandard2.0/System.Security.Permissions.dll": {
+            "assemblyVersion": "4.0.1.0",
+            "fileVersion": "4.6.26515.6"
+          }
+        }
+      },
+      "WebSocketSharp-netstandard/1.0.1": {
+        "runtime": {
+          "lib/netstandard2.0/websocket-sharp.dll": {
+            "assemblyVersion": "1.0.1.0",
+            "fileVersion": "1.0.1.0"
+          }
+        }
+      },
+      "ATAS.DataFeedsCore/1.0.0": {
+        "dependencies": {
+          "Newtonsoft.Json": "13.0.3",
+          "OFT.Attributes": "1.0.0",
+          "Utils.Common": "1.0.0",
+          "linq2db": "5.2.2",
+          "morelinq": "3.3.1"
+        },
+        "runtime": {
+          "ATAS.DataFeedsCore.dll": {
+            "fileVersion": "0.0.0.0"
+          }
+        }
+      },
+      "OFT.Attributes/1.0.0": {
+        "dependencies": {
+          "OFT.Localization": "1.0.0",
+          "Utils.Common": "1.0.0"
+        },
+        "runtime": {
+          "OFT.Attributes.dll": {
+            "fileVersion": "0.0.0.0"
+          }
+        }
+      },
+      "OFT.Localization/1.0.0": {
+        "runtime": {
+          "OFT.Localization.dll": {
+            "fileVersion": "0.0.0.0"
+          }
+        },
+        "resources": {
+          "de-de/OFT.Localization.resources.dll": {
+            "locale": "de-de"
+          },
+          "es-es/OFT.Localization.resources.dll": {
+            "locale": "es-es"
+          },
+          "fr-fr/OFT.Localization.resources.dll": {
+            "locale": "fr-fr"
+          },
+          "hi-in/OFT.Localization.resources.dll": {
+            "locale": "hi-in"
+          },
+          "it-it/OFT.Localization.resources.dll": {
+            "locale": "it-it"
+          },
+          "ja-jp/OFT.Localization.resources.dll": {
+            "locale": "ja-jp"
+          },
+          "ko-kr/OFT.Localization.resources.dll": {
+            "locale": "ko-kr"
+          },
+          "pt-pt/OFT.Localization.resources.dll": {
+            "locale": "pt-pt"
+          },
+          "ru-ru/OFT.Localization.resources.dll": {
+            "locale": "ru-ru"
+          },
+          "zh-cn/OFT.Localization.resources.dll": {
+            "locale": "zh-cn"
+          }
+        }
+      },
+      "OFT.Rendering/1.0.0": {
+        "dependencies": {
+          "Avalonia": "11.3.9",
+          "K4os.Compression.LZ4": "1.3.8",
+          "OFT.Attributes": "1.0.0",
+          "SkiaSharp": "3.116.1",
+          "System.IO.Hashing": "10.0.0",
+          "Utils.Common": "1.0.0"
+        },
+        "runtime": {
+          "OFT.Rendering.dll": {
+            "fileVersion": "0.0.0.0"
+          }
+        }
+      },
+      "Utils.Common/1.0.0": {
+        "dependencies": {
+          "CommandLineParser": "2.9.1",
+          "Macross.Json.Extensions": "3.0.0",
+          "Microsoft.Extensions.ObjectPool": "10.0.0",
+          "Newtonsoft.Json": "13.0.3",
+          "Pipelines.Sockets.Unofficial": "2.1.11",
+          "System.Drawing.Common": "8.0.8",
+          "System.Security.Cryptography.ProtectedData": "8.0.0",
+          "WebSocketSharp-netstandard": "1.0.1",
+          "linq2db": "5.2.2",
+          "log4net": "3.3.1",
+          "protobuf-net": "3.2.45",
+          "protobuf-net.Core": "3.2.45"
+        },
+        "runtime": {
+          "Utils.Common.dll": {
+            "fileVersion": "0.0.0.0"
+          }
+        }
+      },
+      "ATAS.DataFeedsCore.Reference/8.0.15.640": {
+        "runtime": {
+          "ATAS.DataFeedsCore.dll": {
+            "assemblyVersion": "8.0.15.640",
+            "fileVersion": "8.0.15.640"
+          }
+        }
+      },
+      "OFT.Attributes.Reference/1.0.0.0": {
+        "runtime": {
+          "OFT.Attributes.dll": {
+            "assemblyVersion": "1.0.0.0",
+            "fileVersion": "1.0.0.0"
+          }
+        }
+      },
+      "OFT.Localization.Reference/1.0.0.0": {
+        "runtime": {
+          "OFT.Localization.dll": {
+            "assemblyVersion": "1.0.0.0",
+            "fileVersion": "1.0.0.0"
+          }
+        },
+        "resources": {
+          "de-de/OFT.Localization.resources.dll": {
+            "locale": "de-de"
+          },
+          "es-es/OFT.Localization.resources.dll": {
+            "locale": "es-es"
+          },
+          "fr-fr/OFT.Localization.resources.dll": {
+            "locale": "fr-fr"
+          },
+          "hi-in/OFT.Localization.resources.dll": {
+            "locale": "hi-in"
+          },
+          "it-it/OFT.Localization.resources.dll": {
+            "locale": "it-it"
+          },
+          "ja-jp/OFT.Localization.resources.dll": {
+            "locale": "ja-jp"
+          },
+          "ko-kr/OFT.Localization.resources.dll": {
+            "locale": "ko-kr"
+          },
+          "pt-pt/OFT.Localization.resources.dll": {
+            "locale": "pt-pt"
+          },
+          "ru-ru/OFT.Localization.resources.dll": {
+            "locale": "ru-ru"
+          },
+          "zh-cn/OFT.Localization.resources.dll": {
+            "locale": "zh-cn"
+          }
+        }
+      },
+      "OFT.Rendering.Reference/8.0.15.640": {
+        "runtime": {
+          "OFT.Rendering.dll": {
+            "assemblyVersion": "8.0.15.640",
+            "fileVersion": "8.0.15.640"
+          }
+        }
+      },
+      "Utils.Common.Reference/1.0.0.0": {
+        "runtime": {
+          "Utils.Common.dll": {
+            "assemblyVersion": "1.0.0.0",
+            "fileVersion": "1.0.0.0"
+          }
+        }
+      }
+    }
+  },
+  "libraries": {
+    "ATAS.Indicators/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "Avalonia/11.3.9": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-YfaTrUxcmVTsGOw2YqdZyunHqZArK16m1pYfNIBvyvAgX89Pzd3A1PgoMkf64u7scL23IN6HkfqhZeFcbYWLoA==",
+      "path": "avalonia/11.3.9",
+      "hashPath": "avalonia.11.3.9.nupkg.sha512"
+    },
+    "Avalonia.Remote.Protocol/11.3.9": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-2XVLTSNa+Nvwu4D8NqqdudhllTaCRA9ZKlLZZvYLZeuLlzg7OcAV+df/biHQc6AqOv7iMFR9K5Zt3wG0EF4KfQ==",
+      "path": "avalonia.remote.protocol/11.3.9",
+      "hashPath": "avalonia.remote.protocol.11.3.9.nupkg.sha512"
+    },
+    "CommandLineParser/2.9.1": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-OE0sl1/sQ37bjVsPKKtwQlWDgqaxWgtme3xZz7JssWUzg5JpMIyHgCTY9MVMxOg48fJ1AgGT3tgdH5m/kQ5xhA==",
+      "path": "commandlineparser/2.9.1",
+      "hashPath": "commandlineparser.2.9.1.nupkg.sha512"
+    },
+    "K4os.Compression.LZ4/1.3.8": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-LhwlPa7c1zs1OV2XadMtAWdImjLIsqFJPoRcIWAadSRn0Ri1DepK65UbWLPmt4riLqx2d40xjXRk0ogpqNtK7g==",
+      "path": "k4os.compression.lz4/1.3.8",
+      "hashPath": "k4os.compression.lz4.1.3.8.nupkg.sha512"
+    },
+    "linq2db/5.2.2": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-RPELtCwa5RxL1AuP8LCLsEBDpFMizHgG9J3lo1nQWrcQDvFQnKA2+ME06W3Ke/gg2kKrTd/l8Rhqu6lgPTyNqA==",
+      "path": "linq2db/5.2.2",
+      "hashPath": "linq2db.5.2.2.nupkg.sha512"
+    },
+    "log4net/3.3.1": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-fgQ8XkqF0r4/CRfAq8xZqlPrG0/9n4rJAa1HlFGQMXtCAxbbLzXyuXCbu65NUbcKzQ9KDYr4239NNqipVRCv6A==",
+      "path": "log4net/3.3.1",
+      "hashPath": "log4net.3.3.1.nupkg.sha512"
+    },
+    "Macross.Json.Extensions/3.0.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-AkNshs6dopj8FXsmkkJxvLivN2SyDJQDbjcds5lo9+Y6L4zpcoXdmzXQ3VVN+AIWQr0CTD5A7vkuHGAr2aypZg==",
+      "path": "macross.json.extensions/3.0.0",
+      "hashPath": "macross.json.extensions.3.0.0.nupkg.sha512"
+    },
+    "MicroCom.Runtime/0.11.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-MEnrZ3UIiH40hjzMDsxrTyi8dtqB5ziv3iBeeU4bXsL/7NLSal9F1lZKpK+tfBRnUoDSdtcW3KufE4yhATOMCA==",
+      "path": "microcom.runtime/0.11.0",
+      "hashPath": "microcom.runtime.0.11.0.nupkg.sha512"
+    },
+    "Microsoft.Extensions.ObjectPool/10.0.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-bpeCq0IYmVLACyEUMzFIOQX+zZUElG1t+nu1lSxthe7B+1oNYking7b91305+jNB6iwojp9fqTY9O+Nh7ULQxg==",
+      "path": "microsoft.extensions.objectpool/10.0.0",
+      "hashPath": "microsoft.extensions.objectpool.10.0.0.nupkg.sha512"
+    },
+    "Microsoft.Win32.SystemEvents/8.0.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-9opKRyOKMCi2xJ7Bj7kxtZ1r9vbzosMvRrdEhVhDz8j8MoBGgB+WmC94yH839NPH+BclAjtQ/pyagvi/8gDLkw==",
+      "path": "microsoft.win32.systemevents/8.0.0",
+      "hashPath": "microsoft.win32.systemevents.8.0.0.nupkg.sha512"
+    },
+    "morelinq/3.3.1": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-SwXtaqklCdbwrHwk1YuKRmWEllztbbfoQECLz0snzW6CZu8daNKwqBiJrAaNw0/VKWw5JGddPnTU4VRrMjWSHA==",
+      "path": "morelinq/3.3.1",
+      "hashPath": "morelinq.3.3.1.nupkg.sha512"
+    },
+    "Newtonsoft.Json/13.0.3": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-HrC5BXdl00IP9zeV+0Z848QWPAoCr9P3bDEZguI+gkLcBKAOxix/tLEAAHC+UvDNPv4a2d18lOReHMOagPa+zQ==",
+      "path": "newtonsoft.json/13.0.3",
+      "hashPath": "newtonsoft.json.13.0.3.nupkg.sha512"
+    },
+    "Pipelines.Sockets.Unofficial/2.1.11": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-2sGj3VLqG7qXxtZoxOfd97h8/68kz1GdFKqF9j21Ihf3kSG24Tm0Y4LEU6pHYssNC3WfuCDqZ1rOq90el8mQdA==",
+      "path": "pipelines.sockets.unofficial/2.1.11",
+      "hashPath": "pipelines.sockets.unofficial.2.1.11.nupkg.sha512"
+    },
+    "protobuf-net/3.2.45": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-5UZ/ukUHcGbFSl7vNMrHsfjqdxusdd9w7w0fCEXzf3UUtsrGNVCzV5SmF+sCHAbnRV2qPcD1ixiDP7Aj8lX/HA==",
+      "path": "protobuf-net/3.2.45",
+      "hashPath": "protobuf-net.3.2.45.nupkg.sha512"
+    },
+    "protobuf-net.Core/3.2.45": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-PMWatW2NrT1uTXD7etJ4VdQ0wWZLFrIfdRGppD2QX7nzZ0+kIzqhq551u6ZiXJHWJgG4hWFEkSnUnt2aB6posg==",
+      "path": "protobuf-net.core/3.2.45",
+      "hashPath": "protobuf-net.core.3.2.45.nupkg.sha512"
+    },
+    "SkiaSharp/3.116.1": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-DNDwbRjP+aMo27dV2h/uHCVTcWubWWxHnPLiePNyl24f4Pv43mQ8AQQeseOrKR+J3AOCEs6t0sUjo0aa3j3RWQ==",
+      "path": "skiasharp/3.116.1",
+      "hashPath": "skiasharp.3.116.1.nupkg.sha512"
+    },
+    "SkiaSharp.NativeAssets.macOS/3.116.1": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-3KPvpKysDmEMt0NnAZPX5U6KFk0LmG/72/IjAIJemIksIZ0Tjs9pGpr3L+zboVCv1MLVoJLKl3nJDXUG6Jda6A==",
+      "path": "skiasharp.nativeassets.macos/3.116.1",
+      "hashPath": "skiasharp.nativeassets.macos.3.116.1.nupkg.sha512"
+    },
+    "SkiaSharp.NativeAssets.Win32/3.116.1": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-dRQ75MCI8oz6zAs2Y1w6pq6ARs4MhdNG+gf3doOxOxdnueDXffQLGQIxON54GDoxc0WjKOoHMKBR4DhaduwwQw==",
+      "path": "skiasharp.nativeassets.win32/3.116.1",
+      "hashPath": "skiasharp.nativeassets.win32.3.116.1.nupkg.sha512"
+    },
+    "System.Configuration.ConfigurationManager/4.5.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-UIFvaFfuKhLr9u5tWMxmVoDPkFeD+Qv8gUuap4aZgVGYSYMdERck4OhLN/2gulAc0nYTEigWXSJNNWshrmxnng==",
+      "path": "system.configuration.configurationmanager/4.5.0",
+      "hashPath": "system.configuration.configurationmanager.4.5.0.nupkg.sha512"
+    },
+    "System.Drawing.Common/8.0.8": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-4ZM1wvLjz9nVVExsfPAaSl/qOvU+QNedJL5rQ+2Wbow+iGeyO0e7XN07707rMBgaffEeeLrCZBwC0oHUuvRdPw==",
+      "path": "system.drawing.common/8.0.8",
+      "hashPath": "system.drawing.common.8.0.8.nupkg.sha512"
+    },
+    "System.IO.Hashing/10.0.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-MqSp5IfX9RdWVwTED0WSRL1kZDNB7GlFj64O/NAJs4uO1beBHWEAFLlC7j8Fw/PkI+SUzooLVNvAe4aEkSwsRg==",
+      "path": "system.io.hashing/10.0.0",
+      "hashPath": "system.io.hashing.10.0.0.nupkg.sha512"
+    },
+    "System.Security.Cryptography.ProtectedData/8.0.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-+TUFINV2q2ifyXauQXRwy4CiBhqvDEDZeVJU7qfxya4aRYOKzVBpN+4acx25VcPB9ywUN6C0n8drWl110PhZEg==",
+      "path": "system.security.cryptography.protecteddata/8.0.0",
+      "hashPath": "system.security.cryptography.protecteddata.8.0.0.nupkg.sha512"
+    },
+    "System.Security.Permissions/4.5.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-9gdyuARhUR7H+p5CjyUB/zPk7/Xut3wUSP8NJQB6iZr8L3XUXTMdoLeVAg9N4rqF8oIpE7MpdqHdDHQ7XgJe0g==",
+      "path": "system.security.permissions/4.5.0",
+      "hashPath": "system.security.permissions.4.5.0.nupkg.sha512"
+    },
+    "WebSocketSharp-netstandard/1.0.1": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-knoinAv31vbdxXdypnzN2MPX5hyntVLWceq6OdWRXkr9zzqp/RWbxSuLFGbkW8De1061URgNAN43BUTlgMx1CA==",
+      "path": "websocketsharp-netstandard/1.0.1",
+      "hashPath": "websocketsharp-netstandard.1.0.1.nupkg.sha512"
+    },
+    "ATAS.DataFeedsCore/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "OFT.Attributes/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "OFT.Localization/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "OFT.Rendering/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "Utils.Common/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "ATAS.DataFeedsCore.Reference/8.0.15.640": {
+      "type": "reference",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "OFT.Attributes.Reference/1.0.0.0": {
+      "type": "reference",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "OFT.Localization.Reference/1.0.0.0": {
+      "type": "reference",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "OFT.Rendering.Reference/8.0.15.640": {
+      "type": "reference",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "Utils.Common.Reference/1.0.0.0": {
+      "type": "reference",
+      "serviceable": false,
+      "sha512": ""
+    }
+  }
+}
