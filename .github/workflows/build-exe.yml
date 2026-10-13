@@ -1,0 +1,46 @@
+name: Build cryptoflow.exe
+
+on:
+  push:
+    paths:
+      - "crypto-analyzer/**"
+      - ".github/workflows/build-exe.yml"
+  workflow_dispatch:
+
+jobs:
+  windows-exe:
+    runs-on: windows-latest
+    defaults:
+      run:
+        working-directory: crypto-analyzer
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt pyinstaller
+
+      - name: Unit tests
+        run: python -m pytest -q tests
+
+      - name: Build exe
+        run: >
+          pyinstaller --onefile --console --name cryptoflow
+          --exclude-module matplotlib --exclude-module tkinter --exclude-module pytest
+          cryptoflow_app.py
+
+      - name: Smoke test exe
+        run: |
+          dist\cryptoflow.exe backtest --demo
+          dist\cryptoflow.exe profile --demo --bins 10
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: cryptoflow-windows
+          path: crypto-analyzer/dist/cryptoflow.exe
+          retention-days: 30

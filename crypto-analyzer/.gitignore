@@ -2,3 +2,6 @@
 __pycache__/
 *.csv
 .pytest_cache/
+build/
+dist/
+*.spec

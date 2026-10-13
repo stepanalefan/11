@@ -12,7 +12,17 @@ and gives you the order-flow views of platforms like ATAS:
 | **Backtest** | Value-area rejection + delta strategy with fees, slippage and walk-forward testing |
 | **Scan** | One-line snapshot of many symbols |
 
-## Install
+## Windows .exe (no Python needed)
+
+1. On GitHub, open the repo's **Actions** tab and click the latest green **Build cryptoflow.exe** run.
+2. Under **Artifacts**, download **cryptoflow-windows** and unzip it.
+3. Double-click `cryptoflow.exe` and pick an option from the menu.
+
+The exe also accepts all the commands below, for example `cryptoflow.exe backtest --symbol ETHUSDT --days 90`.
+Windows SmartScreen may warn you because the file isn't code-signed: click **More info → Run anyway**.
+The first launch takes a few seconds while it unpacks.
+
+## Install (Python)
 
 ```bash
 cd crypto-analyzer

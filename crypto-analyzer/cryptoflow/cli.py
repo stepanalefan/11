@@ -216,7 +216,79 @@ def build_parser() -> argparse.ArgumentParser:
     return ap
 
 
+# ------------------------------------------------------ interactive menu
+
+MENU = [
+    ("Volume profile (POC / value area)", "profile"),
+    ("Footprint + imbalances (recent trades)", "footprint"),
+    ("Backtest strategy", "backtest"),
+    ("Walk-forward backtest (honest out-of-sample test)", "walk"),
+    ("Scan several coins", "scan"),
+    ("Download bars to CSV", "fetch"),
+]
+
+
+def _ask(prompt: str, default: str) -> str:
+    val = input(f"  {prompt} [{default}]: ").strip()
+    return val or default
+
+
+def interactive():
+    """Menu shown when the program is started with no arguments (e.g. a double-clicked .exe)."""
+    print("cryptoflow - crypto order-flow analyzer\n")
+    while True:
+        print("What do you want to do?")
+        for i, (label, _) in enumerate(MENU, 1):
+            print(f"  {i}. {label}")
+        print("  0. Exit")
+        choice = input("> ").strip()
+        if choice in ("0", "q", ""):
+            return
+        if not choice.isdigit() or not 1 <= int(choice) <= len(MENU):
+            print("Please type a number from the list.\n")
+            continue
+        cmd = MENU[int(choice) - 1][1]
+
+        demo = _ask("Use offline demo data? (y/n)", "n").lower().startswith("y")
+        argv = ["backtest" if cmd == "walk" else cmd]
+        if demo:
+            argv.append("--demo")
+        else:
+            argv += ["--exchange", _ask("Exchange (binance, binance-futures, bybit, bybit-spot)", "binance")]
+        if cmd == "scan":
+            argv += _ask("Symbols, separated by spaces", "BTCUSDT ETHUSDT SOLUSDT").upper().split()
+        elif not demo:
+            argv += ["--symbol", _ask("Symbol", "BTCUSDT").upper()]
+        argv += ["--interval", _ask("Interval (1m 5m 15m 1h 4h 1d)", "5m" if cmd == "footprint" else "15m")]
+        if not demo:
+            if cmd == "footprint":
+                argv += ["--hours", _ask("Hours of trades to download", "2")]
+            else:
+                argv += ["--days", _ask("Days of history", "180" if cmd in ("backtest", "walk") else "30")]
+        if cmd == "walk":
+            argv.append("--walk-forward")
+        if cmd == "fetch":
+            argv += ["--out", _ask("Save as", "bars.csv")]
+
+        print()
+        try:
+            main(argv)
+        except SystemExit as e:  # argparse errors and exchange errors
+            if e.code not in (0, None):
+                print(e.code if isinstance(e.code, str) else "invalid input")
+        except Exception as e:  # keep the window open on any failure
+            print(f"error: {e}")
+        input("\nPress Enter to return to the menu...")
+        print()
+
+
 def main(argv=None):
+    if argv is None and len(sys.argv) == 1:
+        try:
+            interactive()
+        except (EOFError, KeyboardInterrupt):
+            pass
+        return
     a = build_parser().parse_args(argv)
     try:
         a.fn(a)
