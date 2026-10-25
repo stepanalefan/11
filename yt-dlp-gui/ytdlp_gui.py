@@ -266,7 +266,46 @@ def run_job(job, post):
             post("done", job.jid, "Failed")
 
 
+FROZEN = getattr(sys, "frozen", False)
+RELEASES_URL = "https://github.com/stepanalefan/11/releases/latest"
+
+
+def _prepare_frozen():
+    """Fixes for the PyInstaller .exe: no console streams, bundled ffmpeg."""
+    for name in ("stdout", "stderr"):
+        if getattr(sys, name) is None:  # --noconsole builds have no std streams
+            setattr(sys, name, open(os.devnull, "w", encoding="utf-8"))
+    bundle = getattr(sys, "_MEIPASS", None)
+    exe_dir = os.path.dirname(sys.executable)
+    for d in (bundle, exe_dir):  # bundled ffmpeg first, then one placed next to the exe
+        if d and os.path.isfile(os.path.join(d, "ffmpeg.exe" if os.name == "nt" else "ffmpeg")):
+            os.environ["PATH"] = d + os.pathsep + os.environ.get("PATH", "")
+            break
+
+
+def selftest():
+    """Non-GUI sanity check used by the build pipeline. Exit code 0 = OK."""
+    import tkinter  # noqa: F401
+    import yt_dlp
+    from yt_dlp.extractor import gen_extractor_classes
+    assert len(list(gen_extractor_classes())) > 1000, "extractors missing from bundle"
+    for p in PRESETS:
+        yt_dlp.YoutubeDL(build_ydl_opts(dict(DEFAULTS, preset=p, subtitles=True,
+                                             sponsorblock="Remove sponsors")))
+    assert _has_ffmpeg(), "ffmpeg not found"
+    print("selftest ok:", yt_dlp.version.__version__)
+
+
 def main():
+    if FROZEN:
+        _prepare_frozen()
+    if "--selftest" in sys.argv:
+        try:
+            selftest()
+        except Exception as e:
+            print("selftest FAILED:", repr(e))
+            sys.exit(1)
+        sys.exit(0)
     try:
         import tkinter as tk
         from tkinter import filedialog, messagebox, ttk
@@ -277,7 +316,7 @@ def main():
     except ImportError:
         root = tk.Tk()
         root.withdraw()
-        if messagebox.askyesno(APP_NAME, "yt-dlp is not installed. Install it now with pip?"):
+        if not FROZEN and messagebox.askyesno(APP_NAME, "yt-dlp is not installed. Install it now with pip?"):
             subprocess.call([sys.executable, "-m", "pip", "install", "-U", "yt-dlp"])
             os.execv(sys.executable, [sys.executable] + sys.argv)
         sys.exit(1)
@@ -675,6 +714,13 @@ class App:
 
     # ---------- misc ----------
     def update_ytdlp(self):
+        if FROZEN:  # pip can't update a bundled exe; point to the newest build instead
+            import webbrowser
+            import yt_dlp
+            if self.mb.askyesno(APP_NAME, f"This app bundles yt-dlp {yt_dlp.version.__version__}.\n\n"
+                                          "Open the download page for the newest build?"):
+                webbrowser.open(RELEASES_URL)
+            return
         self.log("Updating yt-dlp …")
 
         def work():

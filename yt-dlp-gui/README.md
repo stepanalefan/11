@@ -2,7 +2,15 @@
 
 A single-file desktop GUI for [yt-dlp](https://github.com/yt-dlp/yt-dlp). It downloads from YouTube and the other 1,800+ sites yt-dlp supports.
 
-## Install & run
+## Windows .exe
+
+Get `UltimateVideoDownloader.exe` from the [Releases page](https://github.com/stepanalefan/11/releases/latest), or from the **Build Windows EXE** run on the Actions tab. It's a single file with Python, yt-dlp and ffmpeg built in, so there's nothing to install: just double-click it.
+
+- **Build it yourself on Windows:** run `build_exe.bat`. To bundle ffmpeg, put `ffmpeg.exe` and `ffprobe.exe` next to it first.
+- **Updating yt-dlp:** the exe can't update itself. Grab a newer build instead (pushing a `ytdlp-gui-v*` tag publishes a release).
+- **Windows SmartScreen** may warn the first time you run it because the exe is unsigned. Choose *More info → Run anyway*.
+
+## Run from source
 
 ```bash
 pip install -r requirements.txt
