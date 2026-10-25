@@ -1,0 +1,273 @@
+// This Pine Script™ code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// Based on "Koalafied VWAP D/W/M/Q/Y" and "VWAPs HTF" (© imokXBT)
+
+//@version=5
+
+// Anchored VWAPs for Daily, Weekly, Monthly, Quarterly and Yearly periods, each with its own
+// +-1 / +-2 standard deviation bands and the previous period's closing VWAP and bands.
+indicator("VWAP D/W/M/Q/Y StDev Bands", "VWAP Bands", overlay = true, max_labels_count = 100)
+
+// ---------- Functions ---------- //
+
+// TradingView vwap function with the volume-weighted standard deviation kept alongside.
+computeVWAP(src, isNewPeriod) =>
+    var float sumSrcVol = na
+    var float sumVol = na
+    var float sumSrcSrcVol = na
+
+    sumSrcVol := isNewPeriod ? src * volume : src * volume + sumSrcVol
+    sumVol := isNewPeriod ? volume : volume + sumVol
+    // sumSrcSrcVol is the dividend later used to calculate the standard deviation
+    sumSrcSrcVol := isNewPeriod ? volume * math.pow(src, 2) : volume * math.pow(src, 2) + sumSrcSrcVol
+
+    _vwap = sumSrcVol / sumVol
+    variance = math.max(sumSrcSrcVol / sumVol - math.pow(_vwap, 2), 0)
+
+    [_vwap, math.sqrt(variance)]
+
+// Standard deviation bands around a VWAP
+computeBands(_vwap, stDev, mult1, mult2) =>
+    [_vwap + stDev * mult2, _vwap + stDev * mult1, _vwap - stDev * mult1, _vwap - stDev * mult2]
+
+// Freezes the last value of the period that just ended
+previousLevels(isNewPeriod, _vwap, s2up, s1up, s1dn, s2dn) =>
+    var float pV = na
+    var float ps2up = na
+    var float ps1up = na
+    var float ps1dn = na
+    var float ps2dn = na
+    pV := isNewPeriod ? _vwap[1] : pV
+    ps2up := isNewPeriod ? s2up[1] : ps2up
+    ps1up := isNewPeriod ? s1up[1] : ps1up
+    ps1dn := isNewPeriod ? s1dn[1] : ps1dn
+    ps2dn := isNewPeriod ? s2dn[1] : ps2dn
+
+    [pV, ps2up, ps1up, ps1dn, ps2dn]
+
+// Label function from sbtnc - Daily Weekly Monthly Opens script
+f_drawLabel(_x, _y, _text, _textcolor) =>
+    var _label = label.new(x = _x, y = _y, text = _text, textcolor = _textcolor, style = label.style_none, size = size.small, xloc = xloc.bar_time)
+    label.set_xy(_label, _x, _y)
+    label.set_textcolor(_label, _textcolor)
+
+// ---------- Inputs ---------- //
+
+src = input.source(hlc3, "VWAP Source", group = "General")
+stDevMult1 = input.float(1.0, "StDev mult 1", minval = 0, step = 0.1, group = "General")
+stDevMult2 = input.float(2.0, "StDev mult 2", minval = 0, step = 0.1, group = "General")
+showLabels = input.bool(true, "Show Labels", group = "General")
+offMult = input.int(15, "Label offset (bars)", group = "General")
+
+labelX = timenow + math.round(ta.change(time) * offMult)
+
+enD = input.bool(true, "Enable Daily", group = "Daily VWAP")
+colD = input.color(color.red, "VWAP", inline = "cD", group = "Daily VWAP")
+colBandD = input.color(color.new(color.red, 60), "Bands", inline = "cD", group = "Daily VWAP")
+colCloudD = input.color(color.new(color.red, 95), "Cloud", inline = "cD", group = "Daily VWAP")
+plotVD = input.bool(true, "VWAP", inline = "pD", group = "Daily VWAP")
+plotS1D = input.bool(true, "+-1 SD", inline = "pD", group = "Daily VWAP")
+plotS2D = input.bool(false, "+-2 SD", inline = "pD", group = "Daily VWAP")
+fillD = input.bool(true, "Fill", inline = "pD", group = "Daily VWAP")
+plotPVD = input.bool(false, "Prev VWAP", inline = "ppD", group = "Daily VWAP")
+plotPS1D = input.bool(false, "Prev +-1 SD", inline = "ppD", group = "Daily VWAP")
+plotPS2D = input.bool(false, "Prev +-2 SD", inline = "ppD", group = "Daily VWAP")
+
+enW = input.bool(true, "Enable Weekly", group = "Weekly VWAP")
+colW = input.color(color.gray, "VWAP", inline = "cW", group = "Weekly VWAP")
+colBandW = input.color(color.new(color.gray, 60), "Bands", inline = "cW", group = "Weekly VWAP")
+colCloudW = input.color(color.new(color.gray, 95), "Cloud", inline = "cW", group = "Weekly VWAP")
+plotVW = input.bool(true, "VWAP", inline = "pW", group = "Weekly VWAP")
+plotS1W = input.bool(true, "+-1 SD", inline = "pW", group = "Weekly VWAP")
+plotS2W = input.bool(false, "+-2 SD", inline = "pW", group = "Weekly VWAP")
+fillW = input.bool(true, "Fill", inline = "pW", group = "Weekly VWAP")
+plotPVW = input.bool(false, "Prev VWAP", inline = "ppW", group = "Weekly VWAP")
+plotPS1W = input.bool(false, "Prev +-1 SD", inline = "ppW", group = "Weekly VWAP")
+plotPS2W = input.bool(false, "Prev +-2 SD", inline = "ppW", group = "Weekly VWAP")
+
+enM = input.bool(true, "Enable Monthly", group = "Monthly VWAP")
+colM = input.color(#5b9cf6, "VWAP", inline = "cM", group = "Monthly VWAP")
+colBandM = input.color(color.new(#5b9cf6, 60), "Bands", inline = "cM", group = "Monthly VWAP")
+colCloudM = input.color(color.new(#5b9cf6, 95), "Cloud", inline = "cM", group = "Monthly VWAP")
+plotVM = input.bool(true, "VWAP", inline = "pM", group = "Monthly VWAP")
+plotS1M = input.bool(true, "+-1 SD", inline = "pM", group = "Monthly VWAP")
+plotS2M = input.bool(false, "+-2 SD", inline = "pM", group = "Monthly VWAP")
+fillM = input.bool(true, "Fill", inline = "pM", group = "Monthly VWAP")
+plotPVM = input.bool(false, "Prev VWAP", inline = "ppM", group = "Monthly VWAP")
+plotPS1M = input.bool(false, "Prev +-1 SD", inline = "ppM", group = "Monthly VWAP")
+plotPS2M = input.bool(false, "Prev +-2 SD", inline = "ppM", group = "Monthly VWAP")
+
+enQ = input.bool(false, "Enable Quarterly", group = "Quarterly VWAP")
+colQ = input.color(#f23645, "VWAP", inline = "cQ", group = "Quarterly VWAP")
+colBandQ = input.color(color.new(#f23645, 60), "Bands", inline = "cQ", group = "Quarterly VWAP")
+colCloudQ = input.color(color.new(#f23645, 95), "Cloud", inline = "cQ", group = "Quarterly VWAP")
+plotVQ = input.bool(true, "VWAP", inline = "pQ", group = "Quarterly VWAP")
+plotS1Q = input.bool(true, "+-1 SD", inline = "pQ", group = "Quarterly VWAP")
+plotS2Q = input.bool(false, "+-2 SD", inline = "pQ", group = "Quarterly VWAP")
+fillQ = input.bool(true, "Fill", inline = "pQ", group = "Quarterly VWAP")
+plotPVQ = input.bool(false, "Prev VWAP", inline = "ppQ", group = "Quarterly VWAP")
+plotPS1Q = input.bool(false, "Prev +-1 SD", inline = "ppQ", group = "Quarterly VWAP")
+plotPS2Q = input.bool(false, "Prev +-2 SD", inline = "ppQ", group = "Quarterly VWAP")
+
+enY = input.bool(false, "Enable Yearly", group = "Yearly VWAP")
+colY = input.color(#42bda8, "VWAP", inline = "cY", group = "Yearly VWAP")
+colBandY = input.color(color.new(#42bda8, 60), "Bands", inline = "cY", group = "Yearly VWAP")
+colCloudY = input.color(color.new(#42bda8, 95), "Cloud", inline = "cY", group = "Yearly VWAP")
+plotVY = input.bool(true, "VWAP", inline = "pY", group = "Yearly VWAP")
+plotS1Y = input.bool(true, "+-1 SD", inline = "pY", group = "Yearly VWAP")
+plotS2Y = input.bool(false, "+-2 SD", inline = "pY", group = "Yearly VWAP")
+fillY = input.bool(true, "Fill", inline = "pY", group = "Yearly VWAP")
+plotPVY = input.bool(false, "Prev VWAP", inline = "ppY", group = "Yearly VWAP")
+plotPS1Y = input.bool(false, "Prev +-1 SD", inline = "ppY", group = "Yearly VWAP")
+plotPS2Y = input.bool(false, "Prev +-2 SD", inline = "ppY", group = "Yearly VWAP")
+
+// ---------- VWAP Calculations ---------- //
+
+newSessionD = timeframe.change("D")
+[vD, stdevD] = computeVWAP(src, newSessionD)
+[s2upD, s1upD, s1dnD, s2dnD] = computeBands(vD, stdevD, stDevMult1, stDevMult2)
+[pVD, ps2upD, ps1upD, ps1dnD, ps2dnD] = previousLevels(newSessionD, vD, s2upD, s1upD, s1dnD, s2dnD)
+
+newSessionW = timeframe.change("W")
+[vW, stdevW] = computeVWAP(src, newSessionW)
+[s2upW, s1upW, s1dnW, s2dnW] = computeBands(vW, stdevW, stDevMult1, stDevMult2)
+[pVW, ps2upW, ps1upW, ps1dnW, ps2dnW] = previousLevels(newSessionW, vW, s2upW, s1upW, s1dnW, s2dnW)
+
+newSessionM = timeframe.change("M")
+[vM, stdevM] = computeVWAP(src, newSessionM)
+[s2upM, s1upM, s1dnM, s2dnM] = computeBands(vM, stdevM, stDevMult1, stDevMult2)
+[pVM, ps2upM, ps1upM, ps1dnM, ps2dnM] = previousLevels(newSessionM, vM, s2upM, s1upM, s1dnM, s2dnM)
+
+newSessionQ = timeframe.change("3M")
+[vQ, stdevQ] = computeVWAP(src, newSessionQ)
+[s2upQ, s1upQ, s1dnQ, s2dnQ] = computeBands(vQ, stdevQ, stDevMult1, stDevMult2)
+[pVQ, ps2upQ, ps1upQ, ps1dnQ, ps2dnQ] = previousLevels(newSessionQ, vQ, s2upQ, s1upQ, s1dnQ, s2dnQ)
+
+newSessionY = timeframe.change("12M")
+[vY, stdevY] = computeVWAP(src, newSessionY)
+[s2upY, s1upY, s1dnY, s2dnY] = computeBands(vY, stdevY, stDevMult1, stDevMult2)
+[pVY, ps2upY, ps1upY, ps1dnY, ps2dnY] = previousLevels(newSessionY, vY, s2upY, s1upY, s1dnY, s2dnY)
+
+// ---------- Plot Daily ---------- //
+plot(enD and plotVD ? vD : na, "Daily VWAP", colD, 2)
+f_drawLabel(labelX, showLabels and enD and plotVD ? vD : na, "__________dVWAP", colD)
+plot(enD and plotS2D ? s2upD : na, "Daily +2 SD", colBandD, 1, plot.style_linebr)
+u1D = plot(enD and plotS1D ? s1upD : na, "Daily +1 SD", colBandD, 1, plot.style_linebr)
+d1D = plot(enD and plotS1D ? s1dnD : na, "Daily -1 SD", colBandD, 1, plot.style_linebr)
+plot(enD and plotS2D ? s2dnD : na, "Daily -2 SD", colBandD, 1, plot.style_linebr)
+f_drawLabel(labelX, showLabels and enD and plotS2D ? s2upD : na, "__________dSD+2", colD)
+f_drawLabel(labelX, showLabels and enD and plotS1D ? s1upD : na, "__________dSD+1", colD)
+f_drawLabel(labelX, showLabels and enD and plotS1D ? s1dnD : na, "__________dSD-1", colD)
+f_drawLabel(labelX, showLabels and enD and plotS2D ? s2dnD : na, "__________dSD-2", colD)
+fill(u1D, d1D, fillD ? colCloudD : na, "Daily +-1 SD Cloud")
+
+plot(enD and plotPVD ? pVD : na, "Prev Daily VWAP", colD, 1, plot.style_cross)
+f_drawLabel(labelX, showLabels and enD and plotPVD ? pVD : na, "__________pdVWAP", colD)
+plot(enD and plotPS2D ? ps2upD : na, "Prev Daily +2 SD", colBandD, 1, plot.style_linebr)
+pu1D = plot(enD and plotPS1D ? ps1upD : na, "Prev Daily +1 SD", colBandD, 1, plot.style_linebr)
+pd1D = plot(enD and plotPS1D ? ps1dnD : na, "Prev Daily -1 SD", colBandD, 1, plot.style_linebr)
+plot(enD and plotPS2D ? ps2dnD : na, "Prev Daily -2 SD", colBandD, 1, plot.style_linebr)
+f_drawLabel(labelX, showLabels and enD and plotPS2D ? ps2upD : na, "__________pdSD+2", colD)
+f_drawLabel(labelX, showLabels and enD and plotPS1D ? ps1upD : na, "__________pdSD+1", colD)
+f_drawLabel(labelX, showLabels and enD and plotPS1D ? ps1dnD : na, "__________pdSD-1", colD)
+f_drawLabel(labelX, showLabels and enD and plotPS2D ? ps2dnD : na, "__________pdSD-2", colD)
+fill(pu1D, pd1D, fillD ? colCloudD : na, "Prev Daily +-1 SD Cloud")
+
+// ---------- Plot Weekly ---------- //
+plot(enW and plotVW ? vW : na, "Weekly VWAP", colW, 2)
+f_drawLabel(labelX, showLabels and enW and plotVW ? vW : na, "__________wVWAP", colW)
+plot(enW and plotS2W ? s2upW : na, "Weekly +2 SD", colBandW, 1, plot.style_linebr)
+u1W = plot(enW and plotS1W ? s1upW : na, "Weekly +1 SD", colBandW, 1, plot.style_linebr)
+d1W = plot(enW and plotS1W ? s1dnW : na, "Weekly -1 SD", colBandW, 1, plot.style_linebr)
+plot(enW and plotS2W ? s2dnW : na, "Weekly -2 SD", colBandW, 1, plot.style_linebr)
+f_drawLabel(labelX, showLabels and enW and plotS2W ? s2upW : na, "__________wSD+2", colW)
+f_drawLabel(labelX, showLabels and enW and plotS1W ? s1upW : na, "__________wSD+1", colW)
+f_drawLabel(labelX, showLabels and enW and plotS1W ? s1dnW : na, "__________wSD-1", colW)
+f_drawLabel(labelX, showLabels and enW and plotS2W ? s2dnW : na, "__________wSD-2", colW)
+fill(u1W, d1W, fillW ? colCloudW : na, "Weekly +-1 SD Cloud")
+
+plot(enW and plotPVW ? pVW : na, "Prev Weekly VWAP", colW, 1, plot.style_cross)
+f_drawLabel(labelX, showLabels and enW and plotPVW ? pVW : na, "__________pwVWAP", colW)
+plot(enW and plotPS2W ? ps2upW : na, "Prev Weekly +2 SD", colBandW, 1, plot.style_linebr)
+pu1W = plot(enW and plotPS1W ? ps1upW : na, "Prev Weekly +1 SD", colBandW, 1, plot.style_linebr)
+pd1W = plot(enW and plotPS1W ? ps1dnW : na, "Prev Weekly -1 SD", colBandW, 1, plot.style_linebr)
+plot(enW and plotPS2W ? ps2dnW : na, "Prev Weekly -2 SD", colBandW, 1, plot.style_linebr)
+f_drawLabel(labelX, showLabels and enW and plotPS2W ? ps2upW : na, "__________pwSD+2", colW)
+f_drawLabel(labelX, showLabels and enW and plotPS1W ? ps1upW : na, "__________pwSD+1", colW)
+f_drawLabel(labelX, showLabels and enW and plotPS1W ? ps1dnW : na, "__________pwSD-1", colW)
+f_drawLabel(labelX, showLabels and enW and plotPS2W ? ps2dnW : na, "__________pwSD-2", colW)
+fill(pu1W, pd1W, fillW ? colCloudW : na, "Prev Weekly +-1 SD Cloud")
+
+// ---------- Plot Monthly ---------- //
+plot(enM and plotVM ? vM : na, "Monthly VWAP", colM, 2)
+f_drawLabel(labelX, showLabels and enM and plotVM ? vM : na, "__________mVWAP", colM)
+plot(enM and plotS2M ? s2upM : na, "Monthly +2 SD", colBandM, 1, plot.style_linebr)
+u1M = plot(enM and plotS1M ? s1upM : na, "Monthly +1 SD", colBandM, 1, plot.style_linebr)
+d1M = plot(enM and plotS1M ? s1dnM : na, "Monthly -1 SD", colBandM, 1, plot.style_linebr)
+plot(enM and plotS2M ? s2dnM : na, "Monthly -2 SD", colBandM, 1, plot.style_linebr)
+f_drawLabel(labelX, showLabels and enM and plotS2M ? s2upM : na, "__________mSD+2", colM)
+f_drawLabel(labelX, showLabels and enM and plotS1M ? s1upM : na, "__________mSD+1", colM)
+f_drawLabel(labelX, showLabels and enM and plotS1M ? s1dnM : na, "__________mSD-1", colM)
+f_drawLabel(labelX, showLabels and enM and plotS2M ? s2dnM : na, "__________mSD-2", colM)
+fill(u1M, d1M, fillM ? colCloudM : na, "Monthly +-1 SD Cloud")
+
+plot(enM and plotPVM ? pVM : na, "Prev Monthly VWAP", colM, 1, plot.style_cross)
+f_drawLabel(labelX, showLabels and enM and plotPVM ? pVM : na, "__________pmVWAP", colM)
+plot(enM and plotPS2M ? ps2upM : na, "Prev Monthly +2 SD", colBandM, 1, plot.style_linebr)
+pu1M = plot(enM and plotPS1M ? ps1upM : na, "Prev Monthly +1 SD", colBandM, 1, plot.style_linebr)
+pd1M = plot(enM and plotPS1M ? ps1dnM : na, "Prev Monthly -1 SD", colBandM, 1, plot.style_linebr)
+plot(enM and plotPS2M ? ps2dnM : na, "Prev Monthly -2 SD", colBandM, 1, plot.style_linebr)
+f_drawLabel(labelX, showLabels and enM and plotPS2M ? ps2upM : na, "__________pmSD+2", colM)
+f_drawLabel(labelX, showLabels and enM and plotPS1M ? ps1upM : na, "__________pmSD+1", colM)
+f_drawLabel(labelX, showLabels and enM and plotPS1M ? ps1dnM : na, "__________pmSD-1", colM)
+f_drawLabel(labelX, showLabels and enM and plotPS2M ? ps2dnM : na, "__________pmSD-2", colM)
+fill(pu1M, pd1M, fillM ? colCloudM : na, "Prev Monthly +-1 SD Cloud")
+
+// ---------- Plot Quarterly ---------- //
+plot(enQ and plotVQ ? vQ : na, "Quarterly VWAP", colQ, 2)
+f_drawLabel(labelX, showLabels and enQ and plotVQ ? vQ : na, "__________qVWAP", colQ)
+plot(enQ and plotS2Q ? s2upQ : na, "Quarterly +2 SD", colBandQ, 1, plot.style_linebr)
+u1Q = plot(enQ and plotS1Q ? s1upQ : na, "Quarterly +1 SD", colBandQ, 1, plot.style_linebr)
+d1Q = plot(enQ and plotS1Q ? s1dnQ : na, "Quarterly -1 SD", colBandQ, 1, plot.style_linebr)
+plot(enQ and plotS2Q ? s2dnQ : na, "Quarterly -2 SD", colBandQ, 1, plot.style_linebr)
+f_drawLabel(labelX, showLabels and enQ and plotS2Q ? s2upQ : na, "__________qSD+2", colQ)
+f_drawLabel(labelX, showLabels and enQ and plotS1Q ? s1upQ : na, "__________qSD+1", colQ)
+f_drawLabel(labelX, showLabels and enQ and plotS1Q ? s1dnQ : na, "__________qSD-1", colQ)
+f_drawLabel(labelX, showLabels and enQ and plotS2Q ? s2dnQ : na, "__________qSD-2", colQ)
+fill(u1Q, d1Q, fillQ ? colCloudQ : na, "Quarterly +-1 SD Cloud")
+
+plot(enQ and plotPVQ ? pVQ : na, "Prev Quarterly VWAP", colQ, 1, plot.style_cross)
+f_drawLabel(labelX, showLabels and enQ and plotPVQ ? pVQ : na, "__________pqVWAP", colQ)
+plot(enQ and plotPS2Q ? ps2upQ : na, "Prev Quarterly +2 SD", colBandQ, 1, plot.style_linebr)
+pu1Q = plot(enQ and plotPS1Q ? ps1upQ : na, "Prev Quarterly +1 SD", colBandQ, 1, plot.style_linebr)
+pd1Q = plot(enQ and plotPS1Q ? ps1dnQ : na, "Prev Quarterly -1 SD", colBandQ, 1, plot.style_linebr)
+plot(enQ and plotPS2Q ? ps2dnQ : na, "Prev Quarterly -2 SD", colBandQ, 1, plot.style_linebr)
+f_drawLabel(labelX, showLabels and enQ and plotPS2Q ? ps2upQ : na, "__________pqSD+2", colQ)
+f_drawLabel(labelX, showLabels and enQ and plotPS1Q ? ps1upQ : na, "__________pqSD+1", colQ)
+f_drawLabel(labelX, showLabels and enQ and plotPS1Q ? ps1dnQ : na, "__________pqSD-1", colQ)
+f_drawLabel(labelX, showLabels and enQ and plotPS2Q ? ps2dnQ : na, "__________pqSD-2", colQ)
+fill(pu1Q, pd1Q, fillQ ? colCloudQ : na, "Prev Quarterly +-1 SD Cloud")
+
+// ---------- Plot Yearly ---------- //
+plot(enY and plotVY ? vY : na, "Yearly VWAP", colY, 2)
+f_drawLabel(labelX, showLabels and enY and plotVY ? vY : na, "__________yVWAP", colY)
+plot(enY and plotS2Y ? s2upY : na, "Yearly +2 SD", colBandY, 1, plot.style_linebr)
+u1Y = plot(enY and plotS1Y ? s1upY : na, "Yearly +1 SD", colBandY, 1, plot.style_linebr)
+d1Y = plot(enY and plotS1Y ? s1dnY : na, "Yearly -1 SD", colBandY, 1, plot.style_linebr)
+plot(enY and plotS2Y ? s2dnY : na, "Yearly -2 SD", colBandY, 1, plot.style_linebr)
+f_drawLabel(labelX, showLabels and enY and plotS2Y ? s2upY : na, "__________ySD+2", colY)
+f_drawLabel(labelX, showLabels and enY and plotS1Y ? s1upY : na, "__________ySD+1", colY)
+f_drawLabel(labelX, showLabels and enY and plotS1Y ? s1dnY : na, "__________ySD-1", colY)
+f_drawLabel(labelX, showLabels and enY and plotS2Y ? s2dnY : na, "__________ySD-2", colY)
+fill(u1Y, d1Y, fillY ? colCloudY : na, "Yearly +-1 SD Cloud")
+
+plot(enY and plotPVY ? pVY : na, "Prev Yearly VWAP", colY, 1, plot.style_cross)
+f_drawLabel(labelX, showLabels and enY and plotPVY ? pVY : na, "__________pyVWAP", colY)
+plot(enY and plotPS2Y ? ps2upY : na, "Prev Yearly +2 SD", colBandY, 1, plot.style_linebr)
+pu1Y = plot(enY and plotPS1Y ? ps1upY : na, "Prev Yearly +1 SD", colBandY, 1, plot.style_linebr)
+pd1Y = plot(enY and plotPS1Y ? ps1dnY : na, "Prev Yearly -1 SD", colBandY, 1, plot.style_linebr)
+plot(enY and plotPS2Y ? ps2dnY : na, "Prev Yearly -2 SD", colBandY, 1, plot.style_linebr)
+f_drawLabel(labelX, showLabels and enY and plotPS2Y ? ps2upY : na, "__________pySD+2", colY)
+f_drawLabel(labelX, showLabels and enY and plotPS1Y ? ps1upY : na, "__________pySD+1", colY)
+f_drawLabel(labelX, showLabels and enY and plotPS1Y ? ps1dnY : na, "__________pySD-1", colY)
+f_drawLabel(labelX, showLabels and enY and plotPS2Y ? ps2dnY : na, "__________pySD-2", colY)
+fill(pu1Y, pd1Y, fillY ? colCloudY : na, "Prev Yearly +-1 SD Cloud")
