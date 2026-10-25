@@ -5,3 +5,10 @@ temp_*
 *.log
 discovery-log.json
 rules.json
+yt-dlp-gui/build/
+yt-dlp-gui/dist/
+yt-dlp-gui/*.spec
+yt-dlp-gui/ffmpeg*
+yt-dlp-gui/ffprobe*
+__pycache__/
+yt-dlp-gui/deno*
