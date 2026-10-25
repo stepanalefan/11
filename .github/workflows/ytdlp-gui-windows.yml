@@ -7,6 +7,10 @@ on:
       - ".github/workflows/ytdlp-gui-windows.yml"
     tags:
       - "ytdlp-gui-v*"
+  pull_request:
+    paths:
+      - "yt-dlp-gui/**"
+      - ".github/workflows/ytdlp-gui-windows.yml"
   workflow_dispatch:
 
 permissions:
