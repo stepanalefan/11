@@ -43,12 +43,17 @@ jobs:
           $bin = Get-ChildItem ffmpeg_tmp -Recurse -Directory -Filter bin | Select-Object -First 1
           Copy-Item "$($bin.FullName)\ffmpeg.exe", "$($bin.FullName)\ffprobe.exe" .
 
+      - name: Download Deno (JavaScript runtime yt-dlp needs for YouTube)
+        run: |
+          Invoke-WebRequest "https://github.com/denoland/deno/releases/latest/download/deno-x86_64-pc-windows-msvc.zip" -OutFile deno.zip
+          Expand-Archive deno.zip -DestinationPath .
+
       - name: Build exe
         run: >
           pyinstaller --noconfirm --clean --onefile --noconsole
           --name UltimateVideoDownloader --icon icon.ico
-          --collect-submodules yt_dlp
-          --add-binary "ffmpeg.exe;." --add-binary "ffprobe.exe;."
+          --collect-submodules yt_dlp --collect-all yt_dlp_ejs
+          --add-binary "ffmpeg.exe;." --add-binary "ffprobe.exe;." --add-binary "deno.exe;."
           ytdlp_gui.py
 
       - name: Smoke test exe

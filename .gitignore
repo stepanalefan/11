@@ -11,3 +11,4 @@ yt-dlp-gui/*.spec
 yt-dlp-gui/ffmpeg*
 yt-dlp-gui/ffprobe*
 __pycache__/
+yt-dlp-gui/deno*

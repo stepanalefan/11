@@ -91,7 +91,7 @@ def build_ydl_opts(s):
         "concurrent_fragment_downloads": int(s["fragments"] or 1),
         "restrictfilenames": bool(s["restrict_names"]),
         "keepvideo": bool(s["keep_original"]),
-        "ignoreerrors": "only_download" if s["playlist"] else False,
+        "ignoreerrors": "only_download",  # one bad video must not abort a channel/playlist
         "retries": 10,
         "fragment_retries": 10,
         "quiet": True,
@@ -262,7 +262,8 @@ def run_job(job, post):
         if job.cancel.is_set():
             post("done", job.jid, "Cancelled")
         else:
-            post("log", job.jid, f"ERROR: {e}")
+            if not isinstance(e, yt_dlp.utils.DownloadError):  # those are already logged
+                post("log", job.jid, f"ERROR: {e}")
             post("done", job.jid, "Failed")
 
 
@@ -271,16 +272,53 @@ RELEASES_URL = "https://github.com/stepanalefan/11/releases/latest"
 
 
 def _prepare_frozen():
-    """Fixes for the PyInstaller .exe: no console streams, bundled ffmpeg."""
+    """Fixes for the PyInstaller .exe: no console streams, bundled ffmpeg/deno on PATH."""
     for name in ("stdout", "stderr"):
         if getattr(sys, name) is None:  # --noconsole builds have no std streams
             setattr(sys, name, open(os.devnull, "w", encoding="utf-8"))
-    bundle = getattr(sys, "_MEIPASS", None)
-    exe_dir = os.path.dirname(sys.executable)
-    for d in (bundle, exe_dir):  # bundled ffmpeg first, then one placed next to the exe
-        if d and os.path.isfile(os.path.join(d, "ffmpeg.exe" if os.name == "nt" else "ffmpeg")):
-            os.environ["PATH"] = d + os.pathsep + os.environ.get("PATH", "")
-            break
+    # Bundled tools first, then ones placed next to the exe, then the system PATH.
+    dirs = [d for d in (getattr(sys, "_MEIPASS", None), os.path.dirname(sys.executable)) if d]
+    os.environ["PATH"] = os.pathsep.join(dirs + [os.environ.get("PATH", "")])
+
+
+def _js_runtime():
+    """Name of the JavaScript runtime yt-dlp will use for YouTube, or None."""
+    import yt_dlp
+    with yt_dlp.YoutubeDL({"quiet": True}) as ydl:
+        for name, rt in ydl._js_runtimes.items():
+            if rt is not None and rt.info is not None and rt.info.supported:
+                return name
+    return None
+
+
+# (substring of a yt-dlp message, hint key) — first match wins
+HINT_PATTERNS = [
+    ("Could not copy Chrome cookie database", "cookie_locked"),
+    ("Failed to decrypt with DPAPI", "cookie_dpapi"),
+    ("Sign in to confirm", "signin"),
+    ("--cookies-from-browser or --cookies", "signin"),
+    ("No supported JavaScript runtime", "jsruntime"),
+]
+HINTS = {
+    "signin": (
+        "YouTube wants you to be signed in (\"confirm you're not a bot\").\n\n"
+        "1. Sign in to YouTube in your browser.\n"
+        "2. Here, open the Network & Auth tab and pick that browser under \"Cookies from browser\". "
+        "Firefox works best on Windows. Chrome and Edge must be fully closed and can still fail.\n"
+        "3. Click \"Retry failed\".\n\n"
+        "Alternative: export a cookies.txt with a browser extension and choose it under \"or cookies.txt\"."),
+    "cookie_locked": (
+        "Couldn't read the browser's cookies because the browser has them locked.\n\n"
+        "Close the browser completely (including its tray icon or background apps), then click \"Retry failed\". "
+        "Or use Firefox, or a cookies.txt file."),
+    "cookie_dpapi": (
+        "Chrome and Edge encrypt their cookies so other apps can't read them.\n\n"
+        "Use Firefox under \"Cookies from browser\", or export a cookies.txt with a browser extension "
+        "and choose it under \"or cookies.txt\". Then click \"Retry failed\"."),
+    "jsruntime": (
+        "YouTube needs a JavaScript runtime (Deno) for full support, and none was found.\n\n"
+        "Install Deno from https://deno.com and restart the app."),
+}
 
 
 def selftest():
@@ -293,7 +331,10 @@ def selftest():
         yt_dlp.YoutubeDL(build_ydl_opts(dict(DEFAULTS, preset=p, subtitles=True,
                                              sponsorblock="Remove sponsors")))
     assert _has_ffmpeg(), "ffmpeg not found"
-    print("selftest ok:", yt_dlp.version.__version__)
+    import yt_dlp_ejs  # noqa: F401  (YouTube challenge solver scripts)
+    rt = _js_runtime()
+    assert rt, "no JavaScript runtime found"
+    print("selftest ok:", yt_dlp.version.__version__, "js:", rt)
 
 
 def main():
@@ -356,9 +397,13 @@ class App:
         self._build()
         self.root.protocol("WM_DELETE_WINDOW", self.on_close)
         self.root.after(100, self.pump)
+        self.hints_shown = set()
         if not _has_ffmpeg():
             self.log("WARNING: ffmpeg not found on PATH — merging, audio conversion and "
                      "embedding will not work. Get it from https://ffmpeg.org/download.html")
+        if _js_runtime() is None:
+            self.log("WARNING: no JavaScript runtime (Deno) found — YouTube downloads may fail. "
+                     "Install it from https://deno.com")
 
     # ---------- layout ----------
     def _build(self):
@@ -384,7 +429,7 @@ class App:
         ttk.Button(out, text="Browse…", command=self.browse_dir).pack(side="left", padx=4)
         ttk.Button(out, text="Open", command=lambda: self.open_path(v["output_dir"].get())).pack(side="left")
 
-        nb = ttk.Notebook(self.root)
+        nb = self.notebook = ttk.Notebook(self.root)
         nb.pack(fill="x", padx=8)
 
         # Format tab
@@ -419,6 +464,7 @@ class App:
         # Network tab
         f3 = ttk.Frame(nb, padding=8)
         nb.add(f3, text="Network & Auth")
+        self.net_tab = f3
         ttk.Label(f3, text="Cookies from browser:").grid(row=0, column=0, sticky="w", **pad)
         ttk.Combobox(f3, textvariable=v["cookies_browser"], values=BROWSERS, state="readonly", width=12).grid(row=0, column=1, sticky="w", **pad)
         ttk.Label(f3, text="or cookies.txt:").grid(row=0, column=2, sticky="w", **pad)
@@ -590,6 +636,7 @@ class App:
                 job = self.jobs.get(jid)
                 if kind == "log":
                     self.log(f"#{jid} {data}" if jid else data)
+                    self._maybe_hint(data)
                     continue
                 if job is None:
                     continue
@@ -632,12 +679,29 @@ class App:
         self._cancel(list(self.jobs.values()))
 
     def retry_failed(self):
+        """Re-queue failed jobs using the *current* settings (e.g. newly chosen cookies)."""
+        current = self.settings()
         for j in list(self.jobs.values()):
             if j.status in ("Failed", "Cancelled", "Finished with errors"):
+                s = dict(current)
+                if j.settings.get("preset") == "__custom__":  # keep a format picked in the inspector
+                    s["preset"], s["custom_format"] = "__custom__", j.settings["custom_format"]
                 self.tree.delete(str(j.jid))
                 del self.jobs[j.jid]
-                self._add_job(j.url, j.settings)
+                self._add_job(j.url, s)
+        self.save_cfg()
         self.schedule()
+
+    def _maybe_hint(self, msg):
+        """Turn known yt-dlp errors into one plain-language dialog per session."""
+        for pattern, key in HINT_PATTERNS:
+            if pattern in msg:
+                if key not in self.hints_shown:
+                    self.hints_shown.add(key)
+                    if key != "jsruntime":
+                        self.notebook.select(self.net_tab)
+                    self.root.after(200, lambda k=key: self.mb.showwarning(APP_NAME, HINTS[k]))
+                return
 
     def clear_finished(self):
         for j in list(self.jobs.values()):

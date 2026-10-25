@@ -39,4 +39,18 @@ python ytdlp_gui.py
 
 Shortcut: `Ctrl+Enter` starts the download.
 
+## "Sign in to confirm you're not a bot"
+
+YouTube sometimes asks yt-dlp to sign in. When that happens:
+
+1. Sign in to YouTube in your browser.
+2. In the app, open **Network & Auth** and pick that browser under **Cookies from browser**.
+   - **Firefox** works best on Windows.
+   - **Chrome and Edge** must be fully closed first. Even then they often fail, because they encrypt their cookies so other apps can't read them.
+3. Click **Retry failed**. It re-runs failed downloads with your current settings.
+
+Another option: export a `cookies.txt` with a browser extension and choose it under **or cookies.txt**.
+
+YouTube also needs a JavaScript runtime ([Deno](https://deno.com)). The Windows exe has one built in. If you run from source, install Deno yourself.
+
 Only download content you have the right to download.
